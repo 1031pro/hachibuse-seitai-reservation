@@ -1,6 +1,6 @@
 window.RESERVATION_CONFIG = {
-  GAS_WEBAPP_URL: '',
-  LIFF_ID: '',
+  GAS_WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbx4hWFUdXqeKM2CNN8B-oXJJxnDUlrVcQdhaybqddwTNKxMkp34eLXo4k4Hvq5cxvFEBw/exec',
+  LIFF_ID: '2011264157-zCt4A73V',
 
   STORE_NAME: '蜂伏整体院',
   HEADER_SUBTITLE: '予約受付',
