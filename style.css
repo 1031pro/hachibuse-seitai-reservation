@@ -95,6 +95,42 @@ button:disabled { cursor: not-allowed; }
   border-radius: 14px;
   background: var(--paper);
 }
+.hero__visual {
+  position: relative;
+  display: flex;
+  min-height: 116px;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 22px;
+  overflow: hidden;
+  background: linear-gradient(140deg, rgba(6,199,85,0.94), rgba(13,129,85,0.88));
+  color: #fff;
+}
+.hero__visual::after {
+  position: absolute;
+  right: -22px;
+  bottom: -46px;
+  width: 132px;
+  height: 132px;
+  border: 22px solid rgba(255,255,255,0.11);
+  border-radius: 50%;
+  content: "";
+}
+.hero__icon {
+  position: relative;
+  z-index: 1;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+}
+.hero h1 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 27px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+}
 .hero__body { padding: 18px; }
 .service-card {
   display: grid;
