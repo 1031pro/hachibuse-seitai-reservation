@@ -4,14 +4,10 @@ window.RESERVATION_CONFIG = {
 
   STORE_NAME: '蜂伏整体院',
   HEADER_SUBTITLE: '予約受付',
-  HERO_TAG: 'LINEからのご予約',
-  HERO_TITLE: 'ご希望の日時で整体予約',
-  HERO_LEAD: '空いている日時を確認し、そのままご予約いただけます。',
   RESERVATION_NOTICE: '',
 
   SERVICE_NAME: '整体コース',
   SERVICE_DURATION_LABEL: '30分〜90分',
-  LOCATION_LABEL: '新宮南I.C降りて2分',
   MENU_SELECTION_ENABLED: true,
   EXTENSION_SELECTION_ENABLED: false,
   SLOT_SCREEN_IDLE_TIMEOUT_MS: 10 * 60 * 1000,

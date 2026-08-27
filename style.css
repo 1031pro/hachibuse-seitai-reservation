@@ -95,51 +95,6 @@ button:disabled { cursor: not-allowed; }
   border-radius: 14px;
   background: var(--paper);
 }
-.hero__visual {
-  position: relative;
-  min-height: 184px;
-  padding: 20px;
-  background: linear-gradient(140deg, rgba(6,199,85,0.92), rgba(13,129,85,0.86));
-  color: #fff;
-}
-.hero__visual::after {
-  position: absolute;
-  inset: auto 18px 18px auto;
-  width: 118px;
-  height: 118px;
-  border: 1px solid rgba(255,255,255,0.35);
-  border-radius: 50%;
-  content: "";
-}
-.hero__tag {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.18);
-  font-size: 12px;
-  font-weight: 800;
-}
-.hero h1 {
-  position: relative;
-  z-index: 1;
-  max-width: 286px;
-  margin: 22px 0 0;
-  font-size: 29px;
-  line-height: 1.28;
-  letter-spacing: 0;
-}
-.hero__lead {
-  position: relative;
-  z-index: 1;
-  max-width: 292px;
-  margin: 12px 0 0;
-  color: rgba(255,255,255,0.92);
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.7;
-}
 .hero__body { padding: 18px; }
 .service-card {
   display: grid;
