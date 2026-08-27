@@ -434,7 +434,11 @@
 
   function selectSlot(slot) {
     state.selectedSlot = slot;
-    selectedDateTime.textContent = slot.displayDate + ' ' + slot.time;
+    selectedDateTime.textContent = window.ReservationTime.formatDateTimeRange(
+      slot.displayDate,
+      slot.time,
+      state.selectedMenu ? state.selectedMenu.durationMinutes : 60
+    );
     selectedMenuName.textContent = state.selectedMenu ? state.selectedMenu.name : '';
     showScreen('form');
   }
@@ -493,7 +497,11 @@
   function showComplete(data, params) {
     var slot = state.selectedSlot || {};
     completeReservationId.textContent = data.reservationId || '-';
-    completeDateTime.textContent = (data.displayDate || slot.displayDate || '') + ' ' + (data.time || slot.time || '');
+    completeDateTime.textContent = window.ReservationTime.formatDateTimeRange(
+      data.displayDate || slot.displayDate || '',
+      data.time || slot.time || '',
+      params.duration_minutes || 60
+    );
     completeName.textContent = params.name || document.getElementById('guestName').value.trim();
     completeContact.textContent = (params.phone || document.getElementById('guestPhone').value.trim()) + ' / ' + (params.email || document.getElementById('guestEmail').value.trim());
     showScreen('complete');
