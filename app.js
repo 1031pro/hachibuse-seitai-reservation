@@ -11,9 +11,13 @@
   var selectedDateTime = document.getElementById('selectedDateTime');
   var selectedMenuName = document.getElementById('selectedMenuName');
   var completeReservationId = document.getElementById('completeReservationId');
+  var completeReservationRow = document.getElementById('completeReservationRow');
   var completeDateTime = document.getElementById('completeDateTime');
   var completeName = document.getElementById('completeName');
   var completeContact = document.getElementById('completeContact');
+  var completeHeading = document.getElementById('completeHeading');
+  var completeReviewNote = document.getElementById('completeReviewNote');
+  var previewNotice = document.getElementById('previewNotice');
   var toast = document.getElementById('toast');
   var paymentField = document.getElementById('paymentField');
   var stripeOption = document.getElementById('stripeOption');
@@ -53,6 +57,7 @@
     applyConfigText();
     setupMenuSelection();
     setupPaymentMode();
+    setupScreenReviewMode();
     setupLiff();
     preloadAvailabilitySnapshot();
     document.addEventListener('pointerdown', handleSlotScreenActivity, { passive: true });
@@ -94,6 +99,15 @@
     }
 
     onsiteInput.checked = true;
+  }
+
+  function setupScreenReviewMode() {
+    if (!config.SCREEN_REVIEW_MODE) return;
+    previewNotice.hidden = false;
+    submitButton.textContent = 'この内容を確認する';
+    completeHeading.textContent = '画面確認が完了しました';
+    completeReviewNote.hidden = false;
+    completeReservationRow.hidden = true;
   }
 
   function setupMenuSelection() {
@@ -476,6 +490,14 @@
       duration_minutes: state.selectedMenu ? state.selectedMenu.durationMinutes : 60,
       payment: getSelectedPayment()
     };
+
+    if (config.SCREEN_REVIEW_MODE) {
+      showComplete({
+        displayDate: state.selectedSlot.displayDate,
+        time: state.selectedSlot.time
+      }, params);
+      return;
+    }
 
     submitLoading.classList.add('is-visible');
     submitButton.disabled = true;

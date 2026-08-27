@@ -7,8 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260827-1">
-  <script src="config.js?v=20260827-1"></script>
+  <link rel="stylesheet" href="style.css?v=20260827-2">
+  <script src="config.js?v=20260827-2"></script>
 </head>
 <body>
   <main class="phone">
@@ -23,6 +23,8 @@
         </svg>
       </button>
     </header>
+
+    <p class="preview-notice" id="previewNotice" hidden>画面確認用です。予約は登録されません。</p>
 
     <section class="screen is-active" data-screen="home">
       <div class="content">
@@ -175,7 +177,7 @@
         </form>
       </div>
       <div class="fixed-action">
-        <button class="primary" type="submit" form="reservationForm">この内容で予約する</button>
+        <button class="primary" type="submit" form="reservationForm" id="submitButton">この内容を確認する</button>
       </div>
     </section>
 
@@ -193,9 +195,10 @@
               <path d="M5 12.5l4.2 4.2L19.5 6.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-          <h2>ご予約ありがとうございます</h2>
+          <h2 id="completeHeading">ご予約ありがとうございます</h2>
+          <p class="complete-note" id="completeReviewNote" hidden>予約データは登録されていません。</p>
           <dl class="complete-summary">
-            <div>
+            <div id="completeReservationRow">
               <dt>予約番号</dt>
               <dd id="completeReservationId">-</dd>
             </div>
@@ -224,6 +227,6 @@
   <script src="api-client.js?v=20260804-1"></script>
   <script src="availability-snapshot.js?v=20260805-1"></script>
   <script src="time-utils.js?v=20260827-1"></script>
-  <script src="app.js?v=20260827-1"></script>
+  <script src="app.js?v=20260827-2"></script>
 </body>
 </html>
