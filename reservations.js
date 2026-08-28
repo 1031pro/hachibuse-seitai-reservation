@@ -197,7 +197,7 @@
       reservation.time,
       reservation.durationMinutes
     );
-    cancelledSummary.textContent = range + 'の' + reservation.menuName + 'をキャンセルしました。';
+    cancelledSummary.textContent = range + '\n' + reservation.menuName + 'をキャンセルしました。';
     rebookLink.href = 'index.html?menu_id=' + encodeURIComponent(reservation.menuId || '');
     showOnly('cancelled');
   }

@@ -820,6 +820,7 @@ button:disabled { cursor: not-allowed; }
 }
 .management-message h2 { margin: 0; font-size: 21px; }
 .management-message p { margin: 10px 0 20px; color: var(--sub); font-size: 13px; font-weight: 700; line-height: 1.7; }
+#cancelledSummary { white-space: pre-line; }
 .management-message .secondary { margin-top: 10px; }
 .management-message--error { border-color: #f0c6cb; }
 .management-link { margin-top: 20px; text-decoration: none; }
