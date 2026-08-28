@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>予約内容の確認・キャンセル</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20260827-3">
+  <script src="config.js?v=20260829-1"></script>
+</head>
+<body>
+  <main class="phone management-page">
+    <header class="topbar">
+      <div class="topbar__title">
+        <strong data-config="STORE_NAME">店舗名</strong>
+        <span>予約確認</span>
+      </div>
+      <button class="topbar__close" type="button" aria-label="閉じる" id="closeButton">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <p class="preview-notice" id="previewNotice" hidden>画面確認用です。実際の予約は変更されません。</p>
+
+    <div class="management-content">
+      <section class="management-hero">
+        <div class="management-hero__icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="6" width="24" height="22" rx="5" stroke="currentColor" stroke-width="2.2"/>
+            <path d="M4 12h24M10 3.5v5M22 3.5v5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="m11 20 3 3 7-8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>予約内容の確認・キャンセル</h1>
+          <p>現在のご予約を確認できます。</p>
+        </div>
+      </section>
+
+      <section class="management-loading" id="loadingState" role="status" aria-live="polite">
+        <span class="spinner"></span>
+        <strong>予約内容を確認しています</strong>
+      </section>
+
+      <section id="reservationState" hidden>
+        <h2 class="management-heading">現在のご予約</h2>
+        <p class="management-policy" id="cancellationPolicy"></p>
+        <div class="reservation-list" id="reservationList"></div>
+      </section>
+
+      <section class="management-message" id="emptyState" hidden>
+        <h2>現在のご予約はありません</h2>
+        <a class="primary management-link" href="index.html">新しく予約する</a>
+      </section>
+
+      <section class="management-message management-message--error" id="errorState" hidden>
+        <h2>予約内容を表示できませんでした</h2>
+        <p id="errorMessage">時間をおいて、もう一度お試しください。</p>
+        <button class="secondary" type="button" id="retryButton">もう一度確認する</button>
+      </section>
+
+      <section class="management-message" id="cancelledState" hidden>
+        <div class="complete-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 12.5l4.2 4.2L19.5 6.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2>キャンセルを受け付けました</h2>
+        <p id="cancelledSummary"></p>
+        <a class="primary management-link" href="index.html" id="rebookLink">別の日時で予約する</a>
+        <button class="secondary" type="button" id="backToListButton">予約一覧に戻る</button>
+      </section>
+    </div>
+  </main>
+
+  <div class="modal-backdrop" id="cancelModal" hidden>
+    <section class="cancel-modal" role="dialog" aria-modal="true" aria-labelledby="cancelModalTitle">
+      <h2 id="cancelModalTitle">この予約をキャンセルしますか？</h2>
+      <p id="cancelModalSummary"></p>
+      <p class="cancel-modal__note">キャンセル後に元へ戻すことはできません。</p>
+      <div class="cancel-modal__actions">
+        <button class="secondary" type="button" id="cancelModalClose">戻る</button>
+        <button class="danger-button" type="button" id="cancelConfirmButton">キャンセルする</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="alert"></div>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="api-client.js?v=20260804-1"></script>
+  <script src="time-utils.js?v=20260827-1"></script>
+  <script src="reservations.js?v=20260827-1"></script>
+</body>
+</html>

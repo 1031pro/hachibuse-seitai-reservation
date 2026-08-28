@@ -718,3 +718,136 @@ button:disabled { cursor: not-allowed; }
 @media (max-width: 430px) {
   .phone { width: 100%; box-shadow: none; }
 }
+
+.management-page { min-height: 100vh; }
+.management-content { padding: 14px 14px 40px; }
+.management-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding: 19px 18px;
+  border-radius: 14px;
+  background: linear-gradient(140deg, rgba(6,199,85,0.94), rgba(13,129,85,0.88));
+  color: #fff;
+}
+.management-hero__icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.16);
+}
+.management-hero__icon svg { width: 32px; height: 32px; }
+.management-hero h1 { margin: 0; font-size: 19px; line-height: 1.4; }
+.management-hero p { margin: 5px 0 0; font-size: 12px; font-weight: 700; opacity: 0.92; }
+.management-heading { margin: 0 0 10px; font-size: 18px; }
+.management-policy {
+  margin: -2px 0 12px;
+  color: var(--sub);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.65;
+}
+.management-loading {
+  display: grid;
+  min-height: 260px;
+  place-items: center;
+  align-content: center;
+  gap: 15px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--sub);
+}
+.management-loading .spinner { margin: 0; }
+.reservation-list { display: grid; gap: 12px; }
+.reservation-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+}
+.reservation-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--soft-green);
+}
+.reservation-card__head span { color: var(--sub); font-size: 11px; font-weight: 700; }
+.reservation-card__head strong {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--line);
+  color: #fff;
+  font-size: 11px;
+}
+.reservation-card__details { display: grid; gap: 10px; margin: 0; padding: 15px 14px; }
+.reservation-card__details div { display: grid; grid-template-columns: 72px 1fr; gap: 8px; }
+.reservation-card__details dt { color: var(--sub); font-size: 12px; font-weight: 800; }
+.reservation-card__details dd { margin: 0; font-size: 14px; font-weight: 800; line-height: 1.55; }
+.cancel-button {
+  width: calc(100% - 28px);
+  min-height: 45px;
+  margin: 0 14px 14px;
+  border: 1px solid #df9fa5;
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--danger);
+  font-weight: 800;
+}
+.reservation-card__deadline {
+  margin: 0 14px 14px;
+  padding: 11px 12px;
+  border-radius: var(--radius);
+  background: var(--amber-bg);
+  color: #7a4a13;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.65;
+}
+.management-message {
+  padding: 28px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  text-align: center;
+}
+.management-message h2 { margin: 0; font-size: 21px; }
+.management-message p { margin: 10px 0 20px; color: var(--sub); font-size: 13px; font-weight: 700; line-height: 1.7; }
+.management-message .secondary { margin-top: 10px; }
+.management-message--error { border-color: #f0c6cb; }
+.management-link { margin-top: 20px; text-decoration: none; }
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(16,23,20,0.52);
+}
+.cancel-modal {
+  width: min(100%, 390px);
+  padding: 22px 18px 18px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.24);
+}
+.cancel-modal h2 { margin: 0; font-size: 20px; line-height: 1.45; }
+.cancel-modal > p { margin: 12px 0 0; color: var(--ink); font-size: 14px; font-weight: 800; line-height: 1.65; }
+.cancel-modal .cancel-modal__note { color: var(--danger); font-size: 12px; font-weight: 700; }
+.cancel-modal__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 20px; }
+.danger-button {
+  min-height: 50px;
+  border-radius: var(--radius);
+  background: var(--danger);
+  color: #fff;
+  font-weight: 800;
+}
+.danger-button:disabled { opacity: 0.58; }

@@ -1,5 +1,5 @@
 window.RESERVATION_CONFIG = {
-  GAS_WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbx4hWFUdXqeKM2CNN8B-oXJJxnDUlrVcQdhaybqddwTNKxMkp34eLXo4k4Hvq5cxvFEBw/exec',
+  GAS_WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbzOjRdb3RuE78bySQhW6Fysa1tmKv1JvXAXbcnNfIELN-LHImRwzsluytS2pQRJ6UVUXg/exec',
   LIFF_ID: '2011264157-zCt4A73V',
 
   STORE_NAME: '蜂伏整体院',
@@ -12,6 +12,7 @@ window.RESERVATION_CONFIG = {
   MENU_SELECTION_ENABLED: true,
   EXTENSION_SELECTION_ENABLED: false,
   SLOT_SCREEN_IDLE_TIMEOUT_MS: 10 * 60 * 1000,
+  CUSTOMER_CANCELLATION_CUTOFF_HOURS: 6,
   MENUS: [
     { id: 'seitai_30', name: '30分コース', durationMinutes: 30, durationLabel: '30分', price: 2500, description: '施術時間30分' },
     { id: 'seitai_45', name: '45分コース', durationMinutes: 45, durationLabel: '45分', price: 3800, description: '施術時間45分' },

@@ -54,6 +54,10 @@
   var snapshotLoader = window.AvailabilitySnapshotClient.createLoader(fetchAvailabilitySnapshot);
 
   document.addEventListener('DOMContentLoaded', function () {
+    if (isReservationManagementLaunch()) {
+      window.location.replace('reservations.html');
+      return;
+    }
     applyConfigText();
     setupMenuSelection();
     setupPaymentMode();
@@ -112,6 +116,7 @@
 
   function setupMenuSelection() {
     var menus = Array.isArray(config.MENUS) ? config.MENUS : [];
+    var requestedMenuId = getLaunchParameter('menu_id');
     if (!config.MENU_SELECTION_ENABLED) {
       state.selectedMenu = menus[0] || {
         id: 'default',
@@ -152,7 +157,28 @@
         updateServiceSummary(menu);
       });
       menuList.appendChild(button);
+      if (requestedMenuId && menu.id === requestedMenuId) button.click();
     });
+  }
+
+  function isReservationManagementLaunch() {
+    return getLaunchParameter('mode') === 'manage';
+  }
+
+  function getLaunchParameter(name) {
+    var direct = new URLSearchParams(window.location.search).get(name);
+    if (direct) return direct;
+
+    var liffState = new URLSearchParams(window.location.search).get('liff.state');
+    if (!liffState) return '';
+    try {
+      var decoded = decodeURIComponent(liffState);
+      var queryStart = decoded.indexOf('?');
+      var query = queryStart >= 0 ? decoded.slice(queryStart + 1) : decoded.replace(/^\?/, '');
+      return new URLSearchParams(query).get(name) || '';
+    } catch (error) {
+      return '';
+    }
   }
 
   function setupExtensionSelection(menus) {
