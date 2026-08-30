@@ -48,7 +48,9 @@
     selectedSlot: null,
     toastTimer: null,
     slotIdleTimer: null,
-    userId: ''
+    userId: '',
+    accessToken: '',
+    liffReady: false
   };
 
   var snapshotLoader = window.AvailabilitySnapshotClient.createLoader(fetchAvailabilitySnapshot);
@@ -233,16 +235,26 @@
   }
 
   function setupLiff() {
+    if (config.SCREEN_REVIEW_MODE) {
+      state.liffReady = true;
+      return;
+    }
     if (!config.LIFF_ID) return;
     loadLiffSdk(function () {
       if (typeof liff === 'undefined') return;
       liff.init({ liffId: config.LIFF_ID }).then(function () {
-        if (liff.isLoggedIn()) {
-          return liff.getProfile().then(function (profile) {
-            state.userId = profile.userId || '';
-          });
+        if (!liff.isLoggedIn()) {
+          liff.login({ redirectUri: window.location.href });
+          return;
         }
-      }).catch(function () {});
+        state.accessToken = liff.getAccessToken() || '';
+        return liff.getProfile().then(function (profile) {
+          state.userId = profile.userId || '';
+          state.liffReady = true;
+        });
+      }).catch(function () {
+        state.liffReady = false;
+      });
     });
   }
 
@@ -501,6 +513,10 @@
       reservationForm.reportValidity();
       return;
     }
+    if (!config.SCREEN_REVIEW_MODE && (!state.liffReady || !state.accessToken)) {
+      showToast('LINEでの本人確認が完了していません。画面を開き直してください');
+      return;
+    }
 
     var params = {
       action: getSelectedPayment() === 'stripe' ? 'createCheckout' : 'submitReservation',
@@ -510,7 +526,7 @@
       phone: document.getElementById('guestPhone').value.trim(),
       email: document.getElementById('guestEmail').value.trim(),
       memo: document.getElementById('guestMemo').value.trim(),
-      user_id: state.userId,
+      access_token: state.accessToken,
       menu_id: state.selectedMenu ? state.selectedMenu.id : '',
       menu_name: state.selectedMenu ? state.selectedMenu.name : (config.SERVICE_NAME || ''),
       duration_minutes: state.selectedMenu ? state.selectedMenu.durationMinutes : 60,
