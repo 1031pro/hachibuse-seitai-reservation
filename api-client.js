@@ -38,39 +38,15 @@
   }
 
   function requestOnce(baseUrl, params, timeoutMs, callback) {
-    var requestId = 'reservation_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-    var frameName = requestId + '_frame';
-    var frame = document.createElement('iframe');
-    var form = document.createElement('form');
+    var callbackName = 'reservationCb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+    var script = document.createElement('script');
     var completed = false;
     var timer = null;
 
-    frame.name = frameName;
-    frame.hidden = true;
-    frame.setAttribute('aria-hidden', 'true');
-    form.method = 'post';
-    form.action = baseUrl;
-    form.target = frameName;
-    form.hidden = true;
-
-    var bodyParams = {};
-    Object.keys(params).forEach(function (key) {
-      bodyParams[key] = params[key];
-    });
-    bodyParams.frame_request_id = requestId;
-    Object.keys(bodyParams).forEach(function (key) {
-      var input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = key;
-      input.value = String(bodyParams[key] == null ? '' : bodyParams[key]);
-      form.appendChild(input);
-    });
-
     function cleanup() {
       if (timer !== null) global.clearTimeout(timer);
-      global.removeEventListener('message', handleMessage);
-      if (form.parentNode) form.parentNode.removeChild(form);
-      if (frame.parentNode) frame.parentNode.removeChild(frame);
+      delete global[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
     }
 
     function finish(err, data) {
@@ -80,24 +56,23 @@
       callback(err, data);
     }
 
-    function isTrustedAppsScriptOrigin(origin) {
-      return origin === 'https://script.google.com' || /^https:\/\/[^/]+\.googleusercontent\.com$/.test(origin);
-    }
+    global[callbackName] = function (data) {
+      finish(null, data);
+    };
 
-    function handleMessage(event) {
-      if (!isTrustedAppsScriptOrigin(event.origin)) return;
-      var message = event.data || {};
-      if (message.type !== 'reservation-api-response' || message.requestId !== requestId) return;
-      finish(null, message.data);
-    }
+    var url = baseUrl + '?callback=' + encodeURIComponent(callbackName);
+    Object.keys(params).forEach(function (key) {
+      url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+    });
 
-    global.addEventListener('message', handleMessage);
+    script.src = url;
+    script.onerror = function () {
+      finish(new Error('通信エラー'));
+    };
     timer = global.setTimeout(function () {
       finish(new Error('通信がタイムアウトしました'));
     }, timeoutMs);
-    document.body.appendChild(frame);
-    document.body.appendChild(form);
-    form.submit();
+    document.body.appendChild(script);
   }
 
   global.ReservationApiClient = {
