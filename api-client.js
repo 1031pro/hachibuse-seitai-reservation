@@ -42,6 +42,13 @@
     var completed = false;
     var timer = null;
 
+    function communicationError(code) {
+      var message = code === 'timeout' ? '通信がタイムアウトしました。' : '通信エラーが発生しました。';
+      var error = new Error(message + '取消・予約の成否は未確認です。一覧を更新して処理結果をご確認ください。（' + code + '）');
+      error.code = code;
+      return error;
+    }
+
     function finish(err, data) {
       if (completed) return;
       completed = true;
@@ -61,19 +68,19 @@
     }).join(''));
     timer = global.setTimeout(function () {
       controller.abort();
-      finish(new Error('通信がタイムアウトしました。予約の確認画面で処理結果をご確認ください。'));
+      finish(communicationError('timeout'));
     }, timeoutMs);
     // Simple CORS POST: credentials are in the body, never in the request URL.
     global.fetch(baseUrl, {
       method: 'POST', body: body, credentials: 'omit', redirect: 'follow',
       referrerPolicy: 'no-referrer', signal: controller.signal
     }).then(function (response) {
-      if (!response.ok) throw new Error('通信エラー');
-      return response.json();
+      if (!response.ok) throw communicationError('http_' + response.status);
+      return response.json().catch(function () { throw communicationError('invalid_json'); });
     }).then(function (data) {
       finish(null, data);
-    }).catch(function () {
-      finish(new Error('通信エラー。予約の確認画面で処理結果をご確認ください。'));
+    }).catch(function (error) {
+      finish(error && error.code ? error : communicationError('network'));
     });
   }
 

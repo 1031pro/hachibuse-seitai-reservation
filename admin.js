@@ -130,7 +130,7 @@
     }, function (err, data) {
       showLoader(false);
       if (err || !data || data.error) {
-        alert(data && data.error ? data.error : 'キャンセルに失敗しました');
+        alert(data && data.error ? data.error : (err && err.message ? err.message : '取消結果を確認できませんでした。一覧を更新してご確認ください。'));
         return;
       }
       if (data.lineNotificationSent) {
