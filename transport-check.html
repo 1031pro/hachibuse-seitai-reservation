@@ -1,15 +1,19 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><title>通信確認</title></head>
 <body><h1>通信確認</h1><p>予約データは変更しません。</p>
+<style>iframe{display:block!important;width:95%;height:240px}</style>
 <label>検証用接続先 <input id="endpoint" type="url" size="100"></label>
-<button id="check">POST通信を確認</button><pre id="result">未実行</pre>
+<button id="check">POST通信を確認</button><pre id="result">未実行</pre><pre id="diagnostic"></pre>
 <script src="post-client.js"></script><script>
+window.addEventListener('message', function (event) {
+  document.getElementById('diagnostic').textContent += JSON.stringify({origin:event.origin,type:event.data&&event.data.type})+'\n';
+});
 document.getElementById('check').onclick = function () {
   var result = document.getElementById('result');
   result.textContent = '確認中';
   var start = Date.now();
   ReservationPostClient.request(document.getElementById('endpoint').value,
-    {action:'transportProbe'}, 20000, function(error, data) {
+    {action:'transportProbe'}, 60000, function(error, data) {
       result.textContent = error ? error.message : JSON.stringify({data:data,durationMs:Date.now()-start});
     });
 };
