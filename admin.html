@@ -165,11 +165,6 @@
     </header>
 
     <main class="wrap">
-      <div class="tabs">
-        <button class="tab is-active" type="button" data-tab="reservations">予約一覧</button>
-        <button class="tab" type="button" data-tab="menus">メニュー設定</button>
-      </div>
-
       <section class="panel" data-section="reservations">
         <div class="filters">
           <select id="statusFilter">
@@ -191,37 +186,18 @@
               <th>連絡先</th>
               <th>決済</th>
               <th>状態</th>
-              <th id="menuOperationHead">操作</th>
+              <th>操作</th>
             </tr>
           </thead>
           <tbody id="reservationRows"></tbody>
         </table>
       </section>
 
-      <section class="panel" data-section="menus" hidden>
-        <div class="menu-actions">
-          <button class="secondary" type="button" id="addMenuButton">メニュー追加</button>
-          <button class="primary" type="button" id="saveMenuButton">保存</button>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>メニュー名</th>
-              <th>所要時間</th>
-              <th>料金</th>
-              <th>説明</th>
-              <th>表示</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody id="menuRows"></tbody>
-        </table>
-      </section>
     </main>
   </section>
 
   <div class="loader" id="loader">読み込み中...</div>
-  <script src="admin.js"></script>
+  <script src="api-client.js?v=20260907-2"></script>
+  <script src="admin.js?v=20260907-2"></script>
 </body>
 </html>

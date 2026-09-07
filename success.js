@@ -37,23 +37,12 @@
       callback(new Error('GAS URL is not configured'));
       return;
     }
-    var callbackName = 'reservationSuccessCb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
-    var script = document.createElement('script');
-    window[callbackName] = function (data) {
-      delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-      callback(null, data);
-    };
-    var url = config.GAS_WEBAPP_URL + '?callback=' + encodeURIComponent(callbackName);
-    Object.keys(apiParams).forEach(function (key) {
-      url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(apiParams[key]);
+    window.ReservationApiClient.request(config.GAS_WEBAPP_URL, apiParams, callback, {
+      timeoutMs: 15000,
+      maxAttempts: 2,
+      retryDelayMs: 500,
+      retryOnErrorResponse: false
     });
-    script.src = url;
-    script.onerror = function () {
-      delete window[callbackName];
-      callback(new Error('通信エラー'));
-    };
-    document.body.appendChild(script);
   }
 
   function renderSuccess(data) {
