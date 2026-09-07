@@ -38,41 +38,43 @@
   }
 
   function requestOnce(baseUrl, params, timeoutMs, callback) {
-    var callbackName = 'reservationCb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-    var script = document.createElement('script');
+    var controller = new AbortController();
     var completed = false;
     var timer = null;
-
-    function cleanup() {
-      if (timer !== null) global.clearTimeout(timer);
-      delete global[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
 
     function finish(err, data) {
       if (completed) return;
       completed = true;
-      cleanup();
+      if (timer !== null) global.clearTimeout(timer);
       callback(err, data);
     }
 
-    global[callbackName] = function (data) {
-      finish(null, data);
-    };
-
-    var url = baseUrl + '?callback=' + encodeURIComponent(callbackName);
+    var body = new URLSearchParams();
     Object.keys(params).forEach(function (key) {
-      url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+      body.set(key, String(params[key] == null ? '' : params[key]));
     });
 
-    script.src = url;
-    script.onerror = function () {
-      finish(new Error('通信エラー'));
-    };
+    var bytes = new Uint8Array(16);
+    global.crypto.getRandomValues(bytes);
+    body.set('request_id', Array.prototype.map.call(bytes, function (b) {
+      return ('0' + b.toString(16)).slice(-2);
+    }).join(''));
     timer = global.setTimeout(function () {
-      finish(new Error('通信がタイムアウトしました'));
+      controller.abort();
+      finish(new Error('通信がタイムアウトしました。予約の確認画面で処理結果をご確認ください。'));
     }, timeoutMs);
-    document.body.appendChild(script);
+    // Simple CORS POST: credentials are in the body, never in the request URL.
+    global.fetch(baseUrl, {
+      method: 'POST', body: body, credentials: 'omit', redirect: 'follow',
+      referrerPolicy: 'no-referrer', signal: controller.signal
+    }).then(function (response) {
+      if (!response.ok) throw new Error('通信エラー');
+      return response.json();
+    }).then(function (data) {
+      finish(null, data);
+    }).catch(function () {
+      finish(new Error('通信エラー。予約の確認画面で処理結果をご確認ください。'));
+    });
   }
 
   global.ReservationApiClient = {

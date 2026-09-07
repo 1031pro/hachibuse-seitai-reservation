@@ -1,34 +1,12 @@
-<!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><title>通信確認</title></head>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><title>通信確認</title></head>
 <body><h1>通信確認</h1><p>予約データは変更しません。</p>
-<style>iframe{display:block!important;width:95%;height:240px}</style>
 <label>検証用接続先 <input id="endpoint" type="url" size="100"></label>
-<button id="check">POST通信を確認</button><pre id="result">未実行</pre><pre id="diagnostic"></pre>
-<button id="fetchCheck">fetch POST通信を確認</button><pre id="fetchResult">未実行</pre>
-<script src="post-client.js"></script><script>
-window.addEventListener('message', function (event) {
-  document.getElementById('diagnostic').textContent += JSON.stringify({origin:event.origin,type:event.data&&event.data.type})+'\n';
-});
-document.getElementById('fetchCheck').onclick = async function () {
-  var output = document.getElementById('fetchResult');
-  output.textContent = '確認中';
-  var start = Date.now();
-  try {
-    var response = await fetch(document.getElementById('endpoint').value, {
-      method:'POST', credentials:'omit', redirect:'follow',
-      body: new URLSearchParams({action:'transportFetchProbe',frame_request_id:crypto.randomUUID()})
-    });
-    var data = await response.json();
-    output.textContent = JSON.stringify({status:response.status,data:data,durationMs:Date.now()-start});
-  } catch (error) { output.textContent = error.message; }
-};
-document.getElementById('check').onclick = function () {
-  var result = document.getElementById('result');
-  result.textContent = '確認中';
-  var start = Date.now();
-  ReservationPostClient.request(document.getElementById('endpoint').value,
-    {action:'transportProbe'}, 60000, function(error, data) {
-      result.textContent = error ? error.message : JSON.stringify({data:data,durationMs:Date.now()-start});
-    });
+<button id="check">POST通信を確認</button><pre id="result">未実行</pre>
+<script src="api-client.js?v=20260907-post"></script><script>
+document.getElementById('check').onclick=function(){
+  var result=document.getElementById('result');result.textContent='確認中';
+  ReservationApiClient.request(document.getElementById('endpoint').value,{action:'transportFetchProbe'},function(error,data,meta){
+    result.textContent=JSON.stringify({error:error&&error.message,data:data,durationMs:meta.durationMs});
+  },{timeoutMs:20000,maxAttempts:1});
 };
 </script></body></html>
