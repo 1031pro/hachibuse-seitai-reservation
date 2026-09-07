@@ -9,7 +9,9 @@
 
   var state = {
     key: '',
-    reservations: []
+    reservations: [],
+    pendingCancellation: null,
+    cancelling: false
   };
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -24,6 +26,11 @@
     document.getElementById('statusFilter').addEventListener('change', renderReservations);
     document.getElementById('dateFilter').addEventListener('change', renderReservations);
     document.getElementById('searchInput').addEventListener('input', renderReservations);
+    document.getElementById('confirmCancelButton').addEventListener('click', executeCancellation);
+    document.getElementById('dismissCancelButton').addEventListener('click', function () {
+      state.pendingCancellation = null;
+      document.getElementById('cancelConfirmation').style.display = 'none';
+    });
     var saved = sessionStorage.getItem(config.ADMIN_SESSION_KEY || 'reservationAdminKey');
     if (saved) {
       adminKeyInput.value = saved;
@@ -61,16 +68,18 @@
     location.reload();
   }
 
-  function loadAll() {
+  function loadAll(afterLoad) {
     showLoader(true);
     callApi({ action: 'adminList', key: state.key }, function (err, data) {
       showLoader(false);
       if (err || !data || data.error) {
-        alert(data && data.error ? data.error : '取得に失敗しました');
+        if (typeof afterLoad === 'function') afterLoad(false);
+        else setOperationMessage(data && data.error ? data.error : '一覧を取得できませんでした。更新して再度ご確認ください。');
         return;
       }
       state.reservations = data.reservations || [];
       renderReservations();
+      if (typeof afterLoad === 'function') afterLoad(true);
     });
   }
 
@@ -121,7 +130,24 @@
   }
 
   function cancelReservation(reservationId, reservationName) {
-    if (!confirm(reservationName + '（' + reservationId + '）をキャンセルしますか？')) return;
+    if (state.cancelling) return;
+    state.pendingCancellation = reservationId;
+    document.getElementById('cancelConfirmationText').textContent = reservationName + '（' + reservationId + '）をキャンセルしますか？';
+    document.getElementById('cancelConfirmation').style.display = 'block';
+    document.getElementById('confirmCancelButton').focus();
+  }
+
+  function setOperationMessage(message) {
+    document.getElementById('operationMessage').textContent = message;
+  }
+
+  function executeCancellation() {
+    if (state.cancelling || !state.pendingCancellation) return;
+    var reservationId = state.pendingCancellation;
+    state.pendingCancellation = null;
+    state.cancelling = true;
+    document.getElementById('cancelConfirmation').style.display = 'none';
+    setOperationMessage('取消処理中です。');
     showLoader(true);
     callApi({
       action: 'adminCancel',
@@ -130,15 +156,28 @@
     }, function (err, data) {
       showLoader(false);
       if (err || !data || data.error) {
-        alert(data && data.error ? data.error : (err && err.message ? err.message : '取消結果を確認できませんでした。一覧を更新してご確認ください。'));
+        var detail = data && data.error ? data.error : (err && err.message ? err.message : '取消結果を確認できませんでした。');
+        setOperationMessage(detail + ' 保存された状態を確認しています。');
+        loadAll(function (loaded) {
+          state.cancelling = false;
+          var item = state.reservations.find(function (row) { return row.reservationId === reservationId; });
+          if (loaded && item && item.status === 'キャンセル') {
+            setOperationMessage('予約番号 ' + reservationId + '：キャンセル済みであることを一覧で確認しました。通知の送信結果は未確認です。');
+          } else {
+            setOperationMessage(detail + (loaded && item
+              ? ' 一覧の現在の状態：' + item.status + '。キャンセル完了は確認できていません。'
+              : ' 保存された取消結果を確認できませんでした。時間をおいて一覧を更新してください。'));
+          }
+        });
         return;
       }
+      state.cancelling = false;
       if (data.lineNotificationSent) {
-        alert('キャンセルしました。お客様へLINE通知を送信しました。');
+        setOperationMessage('キャンセルしました。お客様へLINE通知を送信しました。');
       } else if (data.lineNotificationAvailable) {
-        alert('キャンセルしましたが、LINE通知の送信に失敗しました。電話またはメールでご連絡ください。');
+        setOperationMessage('キャンセルしましたが、LINE通知の送信に失敗しました。電話またはメールでご連絡ください。');
       } else {
-        alert('キャンセルしました。LINE通知先がない予約のため、電話またはメールでご連絡ください。');
+        setOperationMessage('キャンセルしました。LINE通知先がない予約のため、電話またはメールでご連絡ください。');
       }
       loadAll();
     });

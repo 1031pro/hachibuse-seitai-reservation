@@ -165,6 +165,12 @@
     </header>
 
     <main class="wrap">
+      <p id="operationMessage" role="status" aria-live="polite"></p>
+      <section id="cancelConfirmation" class="panel" style="display:none" aria-label="予約のキャンセル確認">
+        <p id="cancelConfirmationText"></p>
+        <button id="confirmCancelButton" type="button" class="danger">この予約をキャンセルする</button>
+        <button id="dismissCancelButton" type="button" class="secondary">戻る</button>
+      </section>
       <section class="panel" data-section="reservations">
         <div class="filters">
           <select id="statusFilter">
@@ -198,6 +204,6 @@
 
   <div class="loader" id="loader">読み込み中...</div>
   <script src="api-client.js?v=20260907-errors"></script>
-  <script src="admin.js?v=20260907-errors"></script>
+  <script src="admin.js?v=20260907-reconcile"></script>
 </body>
 </html>
