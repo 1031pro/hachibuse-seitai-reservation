@@ -567,7 +567,10 @@
       params.duration_minutes || 60
     );
     completeName.textContent = params.name || document.getElementById('guestName').value.trim();
-    completeContact.textContent = (params.phone || document.getElementById('guestPhone').value.trim()) + ' / ' + (params.email || document.getElementById('guestEmail').value.trim());
+    completeContact.textContent = [
+      params.phone || document.getElementById('guestPhone').value.trim(),
+      params.email || document.getElementById('guestEmail').value.trim()
+    ].filter(Boolean).join(' / ');
     showScreen('complete');
   }
 
