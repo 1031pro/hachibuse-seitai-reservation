@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <script>
-    // Route management launches before loading or painting the booking home.
-    // Keep the existing destination and parameter precedence; LIFF initializes there.
+    // Hide transitional pages, but let LIFF consume the original URL before routing.
     (function () {
       var params = new URLSearchParams(window.location.search);
       var mode = params.get('mode');
@@ -15,9 +14,17 @@
           mode = new URLSearchParams(start >= 0 ? state.slice(start + 1) : state.replace(/^\?/, '')).get('mode');
         } catch (error) { /* Leave malformed launches to the existing application. */ }
       }
-      if (mode === 'manage') {
+      var authReturn = params.has('liff.state') || params.has('code') || params.has('liffClientId');
+      var manage = mode === 'manage';
+      try {
+        var saved = JSON.parse(sessionStorage.getItem('reservationManagementLaunch') || 'null');
+        if (!mode && authReturn && saved && Date.now() - saved.at < 600000 && Date.now() >= saved.at) manage = true;
+        if (manage) sessionStorage.setItem('reservationManagementLaunch', JSON.stringify({at:Date.now()}));
+        else if (!authReturn) sessionStorage.removeItem('reservationManagementLaunch');
+      } catch (error) { /* Storage can be unavailable; URL routing remains usable. */ }
+      window.reservationLaunch = {manage:manage, authReturn:authReturn};
+      if (manage || authReturn) {
         document.documentElement.style.visibility = 'hidden';
-        window.location.replace('reservations.html');
       }
     })();
   </script>
@@ -246,6 +253,6 @@
   <script src="api-client.js?v=20260907-errors"></script>
   <script src="availability-snapshot.js?v=20260805-1"></script>
   <script src="time-utils.js?v=20260827-1"></script>
-  <script src="app.js?v=20260907-1"></script>
+  <script src="app.js?v=20260908-liff-route"></script>
 </body>
 </html>

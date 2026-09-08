@@ -56,10 +56,37 @@
   var snapshotLoader = window.AvailabilitySnapshotClient.createLoader(fetchAvailabilitySnapshot);
 
   document.addEventListener('DOMContentLoaded', function () {
-    if (isReservationManagementLaunch()) {
-      window.location.replace('reservations.html');
+    var launch = window.reservationLaunch || {};
+    if (isReservationManagementLaunch() || launch.manage || launch.authReturn) {
+      initializeLaunchRouting();
       return;
     }
+    startBookingScreen();
+  });
+
+  function initializeLaunchRouting() {
+    loadLiffSdk(function () {
+      if (typeof liff === 'undefined' || !config.LIFF_ID) { showLaunchError(); return; }
+      liff.init({liffId:config.LIFF_ID}).then(function () {
+        window.reservationLiffInitialized = true;
+        if (isReservationManagementLaunch() || (window.reservationLaunch || {}).manage) {
+          window.location.replace('reservations.html');
+          return;
+        }
+        startBookingScreen();
+        document.documentElement.style.visibility = '';
+      }).catch(showLaunchError);
+    }, showLaunchError);
+  }
+
+  function showLaunchError() {
+    // Do not expose the booking form if management initialization failed.
+    var main = document.querySelector('main');
+    if (main) main.textContent = 'LINEの読み込みに失敗しました。画面を閉じて、LINEから開き直してください。';
+    document.documentElement.style.visibility = '';
+  }
+
+  function startBookingScreen() {
     applyConfigText();
     setupMenuSelection();
     setupPaymentMode();
@@ -69,7 +96,7 @@
     document.addEventListener('pointerdown', handleSlotScreenActivity, { passive: true });
     document.addEventListener('keydown', handleSlotScreenActivity);
     window.addEventListener('scroll', handleSlotScreenActivity, { passive: true });
-  });
+  }
 
   function hasApiUrl() {
     return config.GAS_WEBAPP_URL && config.GAS_WEBAPP_URL.indexOf('__') !== 0;
@@ -242,7 +269,9 @@
     if (!config.LIFF_ID) return;
     loadLiffSdk(function () {
       if (typeof liff === 'undefined') return;
-      liff.init({ liffId: config.LIFF_ID }).then(function () {
+      var initialized = window.reservationLiffInitialized
+        ? Promise.resolve() : liff.init({ liffId: config.LIFF_ID });
+      initialized.then(function () {
         if (!liff.isLoggedIn()) {
           liff.login({ redirectUri: window.location.href });
           return;
@@ -258,7 +287,7 @@
     });
   }
 
-  function loadLiffSdk(done) {
+  function loadLiffSdk(done, failed) {
     if (typeof liff !== 'undefined') {
       done();
       return;
@@ -267,7 +296,7 @@
     var script = document.createElement('script');
     script.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
     script.onload = done;
-    script.onerror = function () {};
+    script.onerror = failed || function () {};
     document.head.appendChild(script);
   }
 
