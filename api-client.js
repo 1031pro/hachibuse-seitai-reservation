@@ -12,7 +12,7 @@
 
     function runAttempt() {
       attempt += 1;
-      requestOnce(baseUrl, params, timeoutMs, function (err, data) {
+      requestOnce(baseUrl, params, timeoutMs, function (err, data, requestId) {
         var shouldRetry = attempt < maxAttempts && (
           !!err || !!(retryOnErrorResponse && data && data.error)
         );
@@ -29,6 +29,7 @@
 
         callback(err, data, {
           attempts: attempt,
+          requestId: requestId,
           durationMs: Date.now() - requestStartedAt
         });
       });
@@ -53,7 +54,7 @@
       if (completed) return;
       completed = true;
       if (timer !== null) global.clearTimeout(timer);
-      callback(err, data);
+      callback(err, data, body.get('request_id'));
     }
 
     var body = new URLSearchParams();

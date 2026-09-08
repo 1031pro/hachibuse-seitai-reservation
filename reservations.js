@@ -62,7 +62,9 @@
       showError('LINEから開き直してください。');
       return;
     }
+    if (window.ReservationDiagnostics) window.ReservationDiagnostics.startLiff();
     liff.init({ liffId: config.LIFF_ID }).then(function () {
+      if (window.ReservationDiagnostics) window.ReservationDiagnostics.endLiff();
       if (!liff.isLoggedIn()) {
         liff.login({ redirectUri: window.location.href });
         return;
@@ -79,6 +81,8 @@
   }
 
   function loadReservations() {
+    var diagnostic = window.ReservationDiagnostics;
+    var sample = diagnostic ? diagnostic.begin() : null;
     closeCancelModal();
     showOnly('loading');
     if (config.SCREEN_REVIEW_MODE) {
@@ -90,14 +94,17 @@
     callApi({
       action: 'customerReservations',
       access_token: accessToken
-    }, function (err, data) {
+    }, function (err, data, metadata) {
+      var renderStart = diagnostic ? diagnostic.now() : 0;
       if (err || !data || !data.success) {
         showError(data && (data.error || data.message)
           ? (data.error || data.message)
           : '時間をおいて、もう一度お試しください。');
+        if (diagnostic) diagnostic.finish(sample, false, metadata, renderStart, accessToken);
         return;
       }
       renderReservations(data.reservations || []);
+      if (diagnostic) diagnostic.finish(sample, true, metadata, renderStart, accessToken);
     });
   }
 
