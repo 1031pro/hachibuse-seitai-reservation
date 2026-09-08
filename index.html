@@ -2,6 +2,25 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <script>
+    // Route management launches before loading or painting the booking home.
+    // Keep the existing destination and parameter precedence; LIFF initializes there.
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var mode = params.get('mode');
+      if (!mode && params.get('liff.state')) {
+        try {
+          var state = decodeURIComponent(params.get('liff.state'));
+          var start = state.indexOf('?');
+          mode = new URLSearchParams(start >= 0 ? state.slice(start + 1) : state.replace(/^\?/, '')).get('mode');
+        } catch (error) { /* Leave malformed launches to the existing application. */ }
+      }
+      if (mode === 'manage') {
+        document.documentElement.style.visibility = 'hidden';
+        window.location.replace('reservations.html');
+      }
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>LINE予約</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
