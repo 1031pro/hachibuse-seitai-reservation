@@ -18,6 +18,7 @@
   var previewNotice = document.getElementById('previewNotice');
   var toast = document.getElementById('toast');
   var selectedReservation = null;
+  var pendingCancellation = null;
   var accessToken = '';
   var toastTimer = null;
 
@@ -148,7 +149,8 @@
     cancelModalSummary.textContent = range + '　' + reservation.menuName;
     cancelModal.hidden = false;
     cancelConfirmButton.disabled = false;
-    cancelConfirmButton.textContent = 'キャンセルする';
+    cancelConfirmButton.textContent = pendingCancellation && pendingCancellation.reservationId === reservation.reservationId
+      ? '取消結果を再確認' : 'キャンセルする';
     cancelConfirmButton.focus();
   }
 
@@ -160,6 +162,10 @@
   function confirmCancellation() {
     if (!selectedReservation) return;
     var reservation = selectedReservation;
+    if (pendingCancellation && pendingCancellation.reservationId === reservation.reservationId) {
+      reconcileCancellation(reservation);
+      return;
+    }
     cancelConfirmButton.disabled = true;
     cancelConfirmButton.textContent = '処理しています';
 
@@ -176,6 +182,11 @@
       access_token: accessToken,
       reservation_id: reservation.reservationId
     }, function (err, data) {
+      if (err || !data || (!data.success && data.code !== 'cancellation_deadline')) {
+        pendingCancellation = reservation;
+        reconcileCancellation(reservation);
+        return;
+      }
       cancelConfirmButton.disabled = false;
       cancelConfirmButton.textContent = 'キャンセルする';
       if (err || !data || !data.success) {
@@ -188,6 +199,26 @@
       }
       closeCancelModal();
       showCancellationComplete(reservation);
+    });
+  }
+
+  function reconcileCancellation(reservation) {
+    cancelConfirmButton.disabled = true;
+    cancelConfirmButton.textContent = '取消結果を確認しています';
+    callApi({action: 'customerReservationStatus', access_token: accessToken,
+      reservation_id: reservation.reservationId}, function (err, data) {
+      if (!err && data && data.success && data.reservationId === reservation.reservationId
+          && data.status === 'cancelled') {
+        pendingCancellation = null;
+        closeCancelModal();
+        showCancellationComplete(reservation);
+      } else {
+        // A still-confirmed row can belong to a cancellation request still running.
+        // Never retry the write or infer success from absence in the future-only list.
+        cancelModalSummary.textContent = 'キャンセル結果をまだ確認できていません。少し時間をおいて「取消結果を再確認」を押してください。確認できない場合は公式LINEからお問い合わせください。';
+        cancelConfirmButton.textContent = '取消結果を再確認';
+      }
+      cancelConfirmButton.disabled = false;
     });
   }
 
