@@ -487,6 +487,8 @@
     });
 
     data.rows.forEach(function (row) {
+      // 表示上限のみ。営業時間・施術後の清掃を含む予約可否は変更しない。
+      if (row.time > '18:30') return;
       var timeCell = document.createElement('div');
       timeCell.className = 'availability-cell is-time';
       timeCell.textContent = row.time;
