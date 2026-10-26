@@ -173,8 +173,7 @@
       button.className = 'menu-card';
       button.innerHTML = '<strong>' + escapeHtml(menu.name) + '</strong>'
         + '<span>' + escapeHtml(menu.description || '') + '</span>'
-        + '<small>' + escapeHtml(menu.durationLabel || (menu.durationMinutes + '分'))
-        + (menu.price ? ' / ' + Number(menu.price).toLocaleString() + '円' : '') + '</small>';
+        + renderMenuPrice(menu);
       button.addEventListener('click', function () {
         state.selectedMenu = menu;
         document.querySelectorAll('.menu-card').forEach(function (el) {
@@ -188,6 +187,16 @@
       menuList.appendChild(button);
       if (requestedMenuId && menu.id === requestedMenuId) button.click();
     });
+  }
+
+  function renderMenuPrice(menu) {
+    var lines = Array.isArray(menu.priceLines) && menu.priceLines.length
+      ? menu.priceLines
+      : [(menu.durationLabel || (menu.durationMinutes + '分'))
+        + (menu.price ? ' / ' + Number(menu.price).toLocaleString() + '円' : '')];
+    return lines.map(function (line) {
+      return '<small>' + escapeHtml(line) + '</small>';
+    }).join('');
   }
 
   function isReservationManagementLaunch() {

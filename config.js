@@ -14,10 +14,10 @@ window.RESERVATION_CONFIG = {
   SLOT_SCREEN_IDLE_TIMEOUT_MS: 10 * 60 * 1000,
   CUSTOMER_CANCELLATION_CUTOFF_HOURS: 6,
   MENUS: [
-    { id: 'seitai_30', name: '30分コース', durationMinutes: 30, durationLabel: '30分', price: 2500, description: '施術時間30分' },
-    { id: 'seitai_45', name: '45分コース', durationMinutes: 45, durationLabel: '45分', price: 3800, description: '施術時間45分' },
-    { id: 'seitai_60', name: '60分コース', durationMinutes: 60, durationLabel: '60分', price: 5000, description: '施術時間60分' },
-    { id: 'seitai_90', name: '90分コース', durationMinutes: 90, durationLabel: '90分', price: 7000, description: '施術時間90分' }
+    { id: 'seitai_30', name: '30分コース', durationMinutes: 30, durationLabel: '30分', price: 2500, priceLines: ['大人 2,500円', '高校生・18歳以下 2,000円'], description: '施術時間30分' },
+    { id: 'seitai_45', name: '45分コース', durationMinutes: 45, durationLabel: '45分', price: 3800, priceLines: ['大人 3,800円', '高校生・18歳以下 2,800円'], description: '施術時間45分' },
+    { id: 'seitai_60', name: '60分コース', durationMinutes: 60, durationLabel: '60分', price: 5000, priceLines: ['大人 5,000円', '高校生・18歳以下 3,500円'], description: '施術時間60分' },
+    { id: 'seitai_90', name: '90分コース', durationMinutes: 90, durationLabel: '90分', price: 7000, priceLines: ['大人 7,000円'], description: '施術時間90分' }
   ],
   PAYMENT_MODE: 'none',
   PAYMENT_LABEL: '事前カード決済',
